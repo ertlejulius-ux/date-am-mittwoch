@@ -1206,7 +1206,7 @@ function changeDur(id, delta) {
   renderAll();
 }
 
-var SONG = "spotify:track:6WTFHKrnZpwEBLRS10Ylqs", player = null, wantPlay = false;
+var SONG = "spotify:track:6WTFHKrnZpwEBLRS10Ylqs", player = null, started = false;
 function songFallback() {
   var box = document.getElementById("song");
   if (player || !box) return;
@@ -1218,9 +1218,10 @@ window.onSpotifyIframeApiReady = function (api) {
   api.createController(box, { uri: SONG, width: "100%", height: 80, theme: "dark" }, function (c) {
     player = c;
     var ended = false;
-    c.addListener("ready", function () { if (wantPlay) c.play(); });
+    c.addListener("ready", function () { kick(); });
     c.addListener("playback_update", function (e) {
       var p = e.data || {};
+      if (!p.isPaused && p.position > 0) started = true;
       if (p.duration && p.position >= p.duration - 400 && !ended) { ended = true; setTimeout(function () { c.seek(0); c.resume(); ended = false; }, 600); }
     });
   });
@@ -1233,14 +1234,15 @@ window.onSpotifyIframeApiReady = function (api) {
   document.head.appendChild(s);
   setTimeout(songFallback, 6000);
 })();
-function startSong() { if (wantPlay) return; wantPlay = true; if (player) { try { player.play(); } catch (x) {} } }
+function kick() { if (player && !started) { try { player.play(); } catch (x) {} } }
+["pointerdown", "touchend", "keydown", "click"].forEach(function (ev) { document.addEventListener(ev, kick, true); });
 
 document.addEventListener("click", function (e) {
   var b = e.target.closest("button, a");
   if (b) {
     if (b.closest(".leaflet-container")) return;
     var d = b.dataset || {};
-    if (d.go) { if (state.step === 0) startSong(); go(d.go === "next" ? 1 : -1); return; }
+    if (d.go) { go(d.go === "next" ? 1 : -1); return; }
     if (d.add) { if (state.chosen.length < MAX && state.chosen.indexOf(d.add) < 0) state.chosen.push(d.add); normalize(); state.open = null; renderAll(); return; }
     if (d.remove) { state.chosen = state.chosen.filter(function (x) { return x !== d.remove; }); delete state.dur[d.remove]; state.open = null; renderAll(); return; }
     if ((d.up || d.down) && sim(state.chosen.slice().reverse(), state.dur) >= 0) return;
