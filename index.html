@@ -802,6 +802,8 @@ a.btn.rose { background: var(--rose-soft); border-color: #e6c9cd; }
 .agenda .a-what { flex: 1; }
 .agenda .a-what b { font-weight: normal; font-family: var(--display); font-size: 18px; display: block; line-height: 1.15; }
 .agenda .a-what span { font-size: 14px; color: var(--muted); }
+.agenda .a-item.buf { background: #f4f8f1; }
+.agenda .a-item.buf .a-time, .agenda .a-item.buf b { color: var(--muted); font-style: italic; }
 .agenda .a-leg { padding: 6px 12px 6px 122px; font-size: 14px; color: var(--muted); font-style: italic; background: #f4f8f1; border-top: 1px dashed var(--line); }
 .agenda .a-leg a { font-style: normal; }
 @media (max-width: 400px) { .agenda .a-leg { padding-left: 12px; } .agenda .a-time { min-width: 84px; font-size: 15px; } }
@@ -955,7 +957,7 @@ var OPTIONS = [
 ];
 
 var W3F_KEY = "72b99beb-6155-4627-aab4-5b3f35e02df2";
-var START = 15 * 60 + 30, LIMIT = 19 * 60, MAX = 2, MIN = 2, STEP_DUR = 15, MIN_DUR = 30, MAX_DUR = 180;
+var START = 15 * 60 + 30, BUF_END = 18 * 60 + 30, LIMIT = 19 * 60, MAX = 2, MIN = 2, STEP_DUR = 15, MIN_DUR = 30, MAX_DUR = 180;
 var state = { step: 0, chosen: [], open: null, dur: {} };
 var map = null, mapLayer = null, routeKey = "";
 
@@ -1021,7 +1023,7 @@ function schedule() {
     rows.push({ o: o, leg: lg, start: t, end: t + durOf(o) });
     t += durOf(o);
   });
-  return { rows: rows, end: t };
+  return { rows: rows, end: t, buf: t < BUF_END ? { start: t, end: BUF_END } : null, calEnd: Math.max(t, BUF_END) };
 }
 
 function renderSteps() {
@@ -1078,6 +1080,7 @@ function renderPlan() {
       '<button type="button" data-more="' + r.o.id + '" aria-label="länger"' + (d >= MAX_DUR || sim(state.chosen, withDur(r.o.id, d + STEP_DUR)) >= 0 ? " disabled" : "") + ">+ 15</button></div>" +
       "</div>";
   });
+  if (s.buf) html += '<div class="leg">danach ' + durText(s.buf.end - s.buf.start) + " puffer bis " + hhmm(s.buf.end) + "</div>";
   box.innerHTML = html + "</div>";
 }
 
@@ -1090,6 +1093,7 @@ function renderResult() {
     if (r.leg) html += '<div class="a-leg">ca. ' + r.leg.min + " min " + r.leg.mode + ' · <a href="' + r.leg.link + '" target="_blank" rel="noopener">weg</a></div>';
     html += '<div class="a-item"><span class="a-time">' + hhmm(r.start) + " - " + hhmm(r.end) + '</span><div class="a-what"><b>' + esc(r.o.name) + "</b><span>" + esc(r.o.where) + "</span></div></div>";
   });
+  if (s.buf) html += '<div class="a-item buf"><span class="a-time">' + hhmm(s.buf.start) + " - " + hhmm(s.buf.end) + '</span><div class="a-what"><b>puffer</b><span>falls was länger dauert</span></div></div>';
   document.getElementById("agenda").innerHTML = html;
   document.getElementById("routeLink").href = routeLink();
   document.getElementById("gcalBtn").href = gcalLink("mittwoch mit julius");
@@ -1146,12 +1150,14 @@ function planLines() {
     if (r.leg) out.push("   (ca. " + r.leg.min + " min " + r.leg.mode + ")");
     out.push(hhmm(r.start) + " - " + hhmm(r.end) + "  " + r.o.name + " (" + r.o.where + ")");
   });
+  var b = schedule().buf;
+  if (b) out.push(hhmm(b.start) + " - " + hhmm(b.end) + "  puffer");
   return out;
 }
 function stamp(m) { return pad(Math.floor(m / 60)) + pad(m % 60) + "00"; }
 function calInfo() {
   var s = schedule();
-  return { start: s.rows[0].start, end: s.end, where: s.rows[0].o.where + ", Wien", details: planLines().join("\n") + "\n\nroute: " + routeLink() };
+  return { start: s.rows[0].start, end: s.calEnd, where: s.rows[0].o.where + ", Wien", details: planLines().join("\n") + "\n\nroute: " + routeLink() };
 }
 function gcalLink(title) {
   var c = calInfo();
