@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14201a">
+<title>Wildwood?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --night: #14201a;
+  --night-2: #1c2b23;
+  --night-3: #253a2f;
+  --cream: #f3ead8;
+  --cream-dim: #c9bfa9;
+  --amber: #e8a54b;
+  --amber-soft: rgba(232,165,75,.14);
+  --berry: #d4645a;
+  --moss: #8fb38a;
+  --line: rgba(243,234,216,.14);
+  --serif: "Fraunces", Georgia, serif;
+  --mono: "DM Mono", ui-monospace, Menlo, monospace;
+}
+* { box-sizing: border-box; }
+html { background: var(--night); }
+body {
+  margin: 0; color: var(--cream); font-family: var(--serif); font-size: 17px; line-height: 1.45;
+  background:
+    radial-gradient(1200px 600px at 80% -10%, rgba(232,165,75,.10), transparent 60%),
+    radial-gradient(900px 500px at -10% 30%, rgba(143,179,138,.08), transparent 60%),
+    var(--night);
+  min-height: 100svh; -webkit-text-size-adjust: 100%;
+  padding: 0 0 120px;
+}
+.wrap { max-width: 640px; margin: 0 auto; padding: 0 18px; }
+
+header { padding: 56px 0 26px; position: relative; }
+.trees { display: block; width: calc(100% + 36px); margin: 18px -18px -26px; height: 70px; opacity: .55; pointer-events: none; }
+.kicker { font-family: var(--mono); font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: var(--amber); }
+h1 { font-weight: 400; font-size: clamp(54px, 15vw, 88px); line-height: .92; margin: 10px 0 14px; letter-spacing: -.02em; }
+h1 em { font-style: italic; color: var(--amber); }
+.sub { color: var(--cream-dim); max-width: 34ch; margin: 0; font-size: 18px; }
+
+.howto { display: flex; gap: 10px; margin: 26px 0 6px; flex-wrap: wrap; }
+.howto span { font-family: var(--mono); font-size: 12.5px; border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; color: var(--cream-dim); }
+.howto b { color: var(--amber); font-weight: 500; margin-right: 6px; }
+
+.filters { position: sticky; top: 0; z-index: 5; background: rgba(20,32,26,.92); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); margin: 18px -18px 0; padding: 12px 18px; }
+.frow { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; }
+.frow::-webkit-scrollbar { display: none; }
+.frow + .frow { margin-top: 8px; }
+.chip { flex: none; font-family: var(--mono); font-size: 13px; color: var(--cream); background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 7px 13px; cursor: pointer; }
+.chip.on { background: var(--cream); color: var(--night); border-color: var(--cream); }
+
+.day { margin-top: 30px; }
+.dayhead { display: flex; align-items: baseline; gap: 12px; margin-bottom: 12px; }
+.dayhead .dn { font-size: 30px; font-style: italic; }
+.dayhead .dd { font-family: var(--mono); font-size: 13px; color: var(--cream-dim); letter-spacing: .06em; }
+.dayhead .rule { flex: 1; border-top: 1px dashed var(--line); transform: translateY(-6px); }
+
+.list { display: grid; gap: 10px; }
+.ticket {
+  position: relative; display: grid; grid-template-columns: 84px 1fr auto; align-items: stretch;
+  background: var(--night-2); border-radius: 14px; cursor: pointer; text-align: left; width: 100%;
+  border: 1px solid transparent; color: inherit; font: inherit; padding: 0;
+  transition: transform .12s ease, border-color .12s ease, background .12s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.ticket:active { transform: scale(.985); }
+.ticket .time { font-family: var(--mono); font-size: 22px; font-weight: 500; display: flex; align-items: center; justify-content: center; border-right: 2px dashed var(--night); position: relative; }
+.ticket .time::before, .ticket .time::after { content: ""; position: absolute; right: -9px; width: 16px; height: 16px; border-radius: 50%; background: var(--night); }
+.ticket .time::before { top: -9px; } .ticket .time::after { bottom: -9px; }
+.ticket .info { padding: 12px 14px; min-width: 0; }
+.ticket .cin { display: block; font-size: 18px; line-height: 1.2; }
+.ticket .addr { display: block; font-family: var(--mono); font-size: 12px; color: var(--cream-dim); margin-top: 3px; }
+.tags { display: flex; gap: 6px; margin-top: 7px; flex-wrap: wrap; }
+.tag { font-family: var(--mono); font-size: 11px; letter-spacing: .05em; text-transform: uppercase; padding: 2px 7px; border-radius: 5px; background: var(--night-3); color: var(--cream-dim); }
+.tag.en { color: var(--moss); }
+.tag.omu { color: var(--amber); }
+.ticket .mark { width: 54px; display: flex; align-items: center; justify-content: center; }
+.ticket .mark i { width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid var(--line); display: flex; align-items: center; justify-content: center; font-style: normal; font-size: 15px; color: transparent; }
+.ticket.sel { background: var(--amber-soft); border-color: var(--amber); }
+.ticket.sel .mark i { background: var(--amber); border-color: var(--amber); color: var(--night); }
+.ticket:focus-visible, .chip:focus-visible, button:focus-visible, a:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
+.empty { color: var(--cream-dim); font-style: italic; padding: 10px 2px; }
+
+.later { margin-top: 46px; padding: 22px 18px; border: 1px solid var(--line); border-radius: 18px; background: linear-gradient(160deg, rgba(143,179,138,.08), transparent 60%); }
+.later h2 { font-weight: 400; font-size: 28px; margin: 0 0 6px; font-style: italic; }
+.later p { margin: 0 0 14px; color: var(--cream-dim); font-size: 16px; }
+.weekgrid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.wd { font-family: var(--mono); font-size: 11px; text-align: center; color: var(--cream-dim); text-transform: uppercase; letter-spacing: .08em; }
+.dbtn { aspect-ratio: 1; border-radius: 10px; border: 1px solid var(--line); background: transparent; color: var(--cream); font-family: var(--mono); font-size: 15px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; padding: 0; }
+.dbtn small { font-size: 9.5px; color: var(--cream-dim); }
+.dbtn.on { background: var(--moss); color: var(--night); border-color: var(--moss); }
+.dbtn.on small { color: var(--night); }
+.slots { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+
+.note { margin-top: 34px; }
+.note label { font-family: var(--mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--amber); }
+.note textarea { margin-top: 8px; width: 100%; min-height: 84px; resize: vertical; background: var(--night-2); color: var(--cream); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; font: 16px var(--serif); }
+.note textarea::placeholder { color: rgba(201,191,169,.6); font-style: italic; }
+
+.src { margin-top: 26px; font-family: var(--mono); font-size: 11.5px; color: rgba(201,191,169,.7); }
+.src a { color: inherit; }
+
+.bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 10; padding: 12px 18px calc(12px + env(safe-area-inset-bottom)); background: rgba(20,32,26,.94); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-top: 1px solid var(--line); }
+.bar .in { max-width: 640px; margin: 0 auto; display: flex; gap: 12px; align-items: center; }
+.bar .count { font-family: var(--mono); font-size: 13px; color: var(--cream-dim); flex: 1; line-height: 1.3; }
+.bar .count b { color: var(--amber); font-weight: 500; font-size: 18px; }
+.send { font: 600 17px var(--serif); background: var(--amber); color: var(--night); border: 0; border-radius: 999px; padding: 13px 22px; cursor: pointer; }
+.send:disabled { background: var(--night-3); color: var(--cream-dim); cursor: default; }
+.err { color: var(--berry); font-family: var(--mono); font-size: 12px; }
+
+.done { display: none; min-height: 100svh; align-items: center; justify-content: center; text-align: center; padding: 30px 22px; }
+.done.show { display: flex; }
+.done h2 { font-weight: 400; font-size: 56px; font-style: italic; margin: 0 0 8px; color: var(--amber); }
+.done p { color: var(--cream-dim); margin: 0 auto; max-width: 30ch; }
+.done .moon { width: 70px; height: 70px; margin: 0 auto 22px; border-radius: 50%; box-shadow: inset -14px -6px 0 0 var(--cream); transform: rotate(-20deg); }
+body.sent .main, body.sent .bar { display: none; }
+@media (prefers-reduced-motion: no-preference) {
+  .day { animation: up .4s ease both; }
+  @keyframes up { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+}
+</style>
+</head>
+<body>
+
+<div class="main">
+  <div class="wrap">
+    <header>
+      <div class="kicker">kino · wien</div>
+      <h1>Wild<em>wood</em>?</h1>
+      <p class="sub">wann hast du zeit? tipp einfach alle vorstellungen an, die dir passen.</p>
+      <div class="howto"><span><b>1</b>antippen, was passt</span><span><b>2</b>gern mehrere</span><span><b>3</b>abschicken</span></div>
+      <svg class="trees" viewBox="0 0 640 90" preserveAspectRatio="none" aria-hidden="true">
+        <path fill="#1c2b23" d="M0 90 L0 60 L18 40 L30 58 L46 22 L62 56 L76 34 L92 60 L110 28 L128 58 L144 44 L160 62 L178 18 L196 58 L210 40 L228 64 L246 30 L264 60 L280 46 L298 66 L316 24 L334 60 L350 38 L368 62 L386 20 L404 58 L420 42 L438 64 L456 26 L474 60 L490 44 L508 66 L526 22 L544 58 L560 40 L578 62 L596 30 L614 60 L640 40 L640 90 Z"/>
+      </svg>
+    </header>
+
+    <div class="filters">
+      <div class="frow" id="flang">
+        <button class="chip on" data-lang="all">alle sprachen</button>
+        <button class="chip" data-lang="en">englisch</button>
+        <button class="chip" data-lang="de">deutsch</button>
+      </div>
+      <div class="frow" id="ftime">
+        <button class="chip on" data-time="all">jede uhrzeit</button>
+        <button class="chip" data-time="early">bis 17 uhr</button>
+        <button class="chip" data-time="late">ab 17 uhr</button>
+      </div>
+    </div>
+
+    <div id="days"></div>
+
+    <section class="later">
+      <h2>und danach?</h2>
+      <p>für die zwei wochen danach gibt's noch keine spielzeiten. tipp die tage an, an denen du könntest.</p>
+      <div class="weekgrid" id="later"></div>
+      <div class="slots" id="slots">
+        <button class="chip" data-slot="nachmittags">eher nachmittags</button>
+        <button class="chip" data-slot="abends">eher abends</button>
+        <button class="chip" data-slot="egal">egal</button>
+      </div>
+    </section>
+
+    <div class="note">
+      <label for="msg">noch was?</label>
+      <textarea id="msg" placeholder="optional"></textarea>
+    </div>
+
+    <p class="src">spielzeiten laut kinoprogramm, stand 25.11. · ohne gewähr</p>
+  </div>
+</div>
+
+<div class="bar">
+  <div class="in">
+    <div class="count" id="count">noch nichts ausgewählt</div>
+    <button class="send" id="send" disabled>an julius schicken</button>
+  </div>
+</div>
+
+<section class="done" id="done">
+  <div>
+    <div class="moon" aria-hidden="true"></div>
+    <h2>danke!</h2>
+    <p>ist angekommen. ich schau, was bei mir passt, und meld mich :)</p>
+  </div>
+</section>
+
+<script>
+var W3F_KEY = "72b99beb-6155-4627-aab4-5b3f35e02df2";
+
+var CINEMAS = {
+  apollo: { name: "Apollo Kino", addr: "Gumpendorfer Str. 63, 1060" },
+  artis: { name: "Artis International", addr: "Schultergasse 5, 1010" },
+  haydn: { name: "Haydn Kino", addr: "Mariahilfer Str. 57, 1060" },
+  spittelberg: { name: "Kino am Spittelberg", addr: "Spittelberggasse 3, 1070" },
+  village: { name: "Village Cinema Wien Mitte", addr: "Landstraßer Hauptstr. 2a, 1030" },
+  millennium: { name: "Cineplexx Millennium City", addr: "Handelskai 94-96, 1200" },
+  donau: { name: "Cineplexx Donau Zentrum", addr: "Wagramer Str. 79, 1220" },
+  gasometer: { name: "Megaplex Gasometer", addr: "Guglgasse 43, 1110" },
+  lugner: { name: "Lugner Kino", addr: "Gablenzgasse 1-3, 1150" }
+};
+
+// lang: en = englisch (OV), omu = englisch mit untertiteln, de = deutsch
+var SHOWS = {
+  "2026-11-26": [["artis","16:45","en"],["lugner","16:15","de"],["donau","15:45","de"],["millennium","17:15","de"],["haydn","17:40","en"],["apollo","17:45","en"],["haydn","20:15","en"]],
+  "2026-11-27": [["gasometer","15:00","de"],["haydn","15:40","en"],["village","16:00","de"],["lugner","16:00","de"],["donau","17:00","de"],["artis","17:15","en"],["millennium","18:00","de"],["haydn","18:00","en"],["apollo","19:30","en"],["haydn","20:30","en"]],
+  "2026-11-28": [["artis","15:00","en"],["gasometer","15:00","de"],["lugner","15:00","de"],["haydn","15:40","en"],["donau","16:00","de"],["millennium","16:45","de"],["spittelberg","16:45","omu"],["haydn","18:00","en"],["apollo","18:30","en"],["haydn","20:30","en"]],
+  "2026-11-29": [["millennium","12:30","de"],["village","14:15","de"],["artis","14:30","en"],["gasometer","14:45","de"],["haydn","14:50","en"],["donau","16:00","de"],["lugner","16:00","de"],["haydn","17:10","en"],["apollo","19:30","en"],["haydn","19:45","en"]],
+  "2026-11-30": [["lugner","16:00","de"],["artis","16:45","en"],["millennium","17:00","en"],["apollo","17:15","en"],["haydn","17:40","omu"],["haydn","20:15","omu"]],
+  "2026-12-01": [["lugner","15:45","de"],["artis","16:45","en"],["millennium","17:15","de"],["haydn","17:15","en"],["haydn","19:45","en"],["apollo","20:00","en"]],
+  "2026-12-02": [["lugner","16:00","de"],["artis","16:45","en"],["millennium","17:15","en"],["apollo","17:15","en"],["haydn","17:40","en"],["spittelberg","17:45","omu"],["haydn","20:15","en"]],
+  "2026-12-03": [["apollo","17:00","en"],["donau","17:15","en"],["millennium","17:45","en"]]
+};
+
+var LATER_FROM = "2026-12-04", LATER_DAYS = 14;
+var WD = ["so", "mo", "di", "mi", "do", "fr", "sa"];
+var WD_LONG = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"];
+var MON = ["jänner","februar","märz","april","mai","juni","juli","august","september","oktober","november","dezember"];
+var LANG_TXT = { en: "englisch", omu: "englisch, dt. untertitel", de: "deutsch" };
+
+var state = { lang: "all", time: "all", picked: {}, later: {}, slot: null };
+
+function d(s) { var p = s.split("-"); return new Date(+p[0], +p[1] - 1, +p[2]); }
+function iso(dt) { return dt.getFullYear() + "-" + ("0" + (dt.getMonth() + 1)).slice(-2) + "-" + ("0" + dt.getDate()).slice(-2); }
+function nice(s) { var x = d(s); return WD_LONG[x.getDay()] + ", " + x.getDate() + ". " + MON[x.getMonth()]; }
+function key(day, s) { return day + "|" + s[0] + "|" + s[1]; }
+function mins(t) { var p = t.split(":"); return +p[0] * 60 + +p[1]; }
+function pass(s) {
+  if (state.lang === "en" && s[2] === "de") return false;
+  if (state.lang === "de" && s[2] !== "de") return false;
+  if (state.time === "early" && mins(s[1]) >= 17 * 60) return false;
+  if (state.time === "late" && mins(s[1]) < 17 * 60) return false;
+  return true;
+}
+function now() { return new Date(); }
+
+function renderDays() {
+  var html = "", n = now();
+  Object.keys(SHOWS).forEach(function (day) {
+    var list = SHOWS[day].slice().sort(function (a, b) { return mins(a[1]) - mins(b[1]); }).filter(function (s) {
+      var dt = d(day); dt.setMinutes(mins(s[1]));
+      return dt > n && pass(s);
+    });
+    if (!list.length) return;
+    var x = d(day);
+    html += '<section class="day"><div class="dayhead"><span class="dn">' + WD_LONG[x.getDay()].toLowerCase() + '</span><span class="dd">' + x.getDate() + "." + (x.getMonth() + 1) + '.</span><span class="rule"></span></div><div class="list">';
+    list.forEach(function (s) {
+      var k = key(day, s), c = CINEMAS[s[0]], sel = !!state.picked[k];
+      var tag = s[2] === "de" ? '<span class="tag">deutsch</span>' : s[2] === "omu" ? '<span class="tag omu">englisch · omu</span>' : '<span class="tag en">englisch</span>';
+      html += '<button class="ticket' + (sel ? " sel" : "") + '" data-k="' + k + '" aria-pressed="' + sel + '">' +
+        '<span class="time">' + s[1] + '</span>' +
+        '<span class="info"><span class="cin">' + c.name + '</span><span class="addr">' + c.addr + '</span><span class="tags">' + tag + "</span></span>" +
+        '<span class="mark"><i>✓</i></span></button>';
+    });
+    html += "</div></section>";
+  });
+  document.getElementById("days").innerHTML = html || '<p class="empty">mit diesem filter gibt es keine vorstellungen.</p>';
+}
+
+function renderLater() {
+  var start = d(LATER_FROM), html = "", first = (start.getDay() + 6) % 7;
+  ["mo","di","mi","do","fr","sa","so"].forEach(function (w) { html += '<div class="wd">' + w + "</div>"; });
+  for (var i = 0; i < first; i++) html += "<div></div>";
+  for (var j = 0; j < LATER_DAYS; j++) {
+    var x = new Date(start); x.setDate(start.getDate() + j);
+    var k = iso(x);
+    html += '<button class="dbtn' + (state.later[k] ? " on" : "") + '" data-later="' + k + '" aria-pressed="' + !!state.later[k] + '">' + x.getDate() + "<small>" + MON[x.getMonth()].slice(0, 3) + "</small></button>";
+  }
+  document.getElementById("later").innerHTML = html;
+  var sl = document.querySelectorAll("#slots .chip");
+  for (var m = 0; m < sl.length; m++) sl[m].classList.toggle("on", sl[m].dataset.slot === state.slot);
+}
+
+function renderBar() {
+  var n = Object.keys(state.picked).length, l = Object.keys(state.later).length;
+  var parts = [];
+  if (n) parts.push("<b>" + n + "</b> " + (n === 1 ? "vorstellung" : "vorstellungen"));
+  if (l) parts.push("<b>" + l + "</b> " + (l === 1 ? "tag danach" : "tage danach"));
+  document.getElementById("count").innerHTML = parts.length ? parts.join(" · ") : "noch nichts ausgewählt";
+  document.getElementById("send").disabled = !n && !l;
+}
+
+function renderChips() {
+  var a = document.querySelectorAll("#flang .chip"), b = document.querySelectorAll("#ftime .chip");
+  for (var i = 0; i < a.length; i++) a[i].classList.toggle("on", a[i].dataset.lang === state.lang);
+  for (var j = 0; j < b.length; j++) b[j].classList.toggle("on", b[j].dataset.time === state.time);
+}
+
+function renderAll() { renderChips(); renderDays(); renderLater(); renderBar(); }
+
+function pickedLines() {
+  return Object.keys(state.picked).sort(function (a, b) { var x = a.split("|"), y = b.split("|"); return (x[0] + x[2]).localeCompare(y[0] + y[2]); }).map(function (k) {
+    var p = k.split("|"), c = CINEMAS[p[1]], s = state.picked[k];
+    return nice(p[0]) + ", " + p[2] + "  " + c.name + " (" + c.addr + ") · " + LANG_TXT[s[2]];
+  });
+}
+
+function send() {
+  var btn = document.getElementById("send");
+  btn.disabled = true; btn.textContent = "wird geschickt ...";
+  var old = document.querySelector(".err"); if (old) old.remove();
+  var later = Object.keys(state.later).sort().map(nice);
+  var data = {
+    access_key: W3F_KEY,
+    subject: "wildwood: wann es passt",
+    from_name: "wildwood",
+    vorstellungen: pickedLines().join("\n") || "-",
+    spaeter_moeglich: later.length ? later.join("\n") + (state.slot ? "\n(" + state.slot + ")" : "") : "-",
+    nachricht: document.getElementById("msg").value.trim() || "-"
+  };
+  fetch("https://api.web3forms.com/submit", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "Accept": "application/json" },
+    body: JSON.stringify(data)
+  })
+    .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { ok: r.ok, j: j }; }); })
+    .then(function (res) {
+      if (!res.ok || res.j.success === false) throw new Error("fail");
+      document.body.classList.add("sent");
+      document.getElementById("done").classList.add("show");
+      window.scrollTo(0, 0);
+    })
+    .catch(function () {
+      var e = document.createElement("div"); e.className = "err"; e.textContent = "hat nicht geklappt, probier's nochmal.";
+      document.getElementById("count").appendChild(e);
+      btn.disabled = false; btn.textContent = "an julius schicken";
+    });
+}
+
+document.addEventListener("click", function (e) {
+  var t = e.target.closest("[data-k],[data-lang],[data-time],[data-later],[data-slot],#send");
+  if (!t) return;
+  if (t.id === "send") { send(); return; }
+  if (t.dataset.k) {
+    var k = t.dataset.k;
+    if (state.picked[k]) delete state.picked[k];
+    else { var p = k.split("|"); state.picked[k] = SHOWS[p[0]].filter(function (s) { return s[0] === p[1] && s[1] === p[2]; })[0]; }
+    t.classList.toggle("sel", !!state.picked[k]); t.setAttribute("aria-pressed", !!state.picked[k]);
+    renderBar(); return;
+  }
+  if (t.dataset.lang) { state.lang = t.dataset.lang; renderChips(); renderDays(); return; }
+  if (t.dataset.time) { state.time = t.dataset.time; renderChips(); renderDays(); return; }
+  if (t.dataset.later) { var l = t.dataset.later; if (state.later[l]) delete state.later[l]; else state.later[l] = 1; renderLater(); renderBar(); return; }
+  if (t.dataset.slot) { state.slot = state.slot === t.dataset.slot ? null : t.dataset.slot; renderLater(); return; }
+});
+
+renderAll();
+</script>
+</body>
+</html>
